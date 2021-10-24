@@ -11,34 +11,34 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_resource_group" "main" {
+resource "azurerm_resource_group" "main" {
   name     = "sample-vm"
 }
 
 resource "azurerm_virtual_network" "main" {
   name                = "azure-network"
   allocation_method   = "Dynamic"
-  location            = data.azurerm_resource_group.main.location
-  resource_group_name = data.azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 }
 
 resource "azurerm_subnet" "internal" {
   name                 = "internal"
-  resource_group_name  = data.azurerm_resource_group.main.name
+  resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   allocation_method    = "Dynamic"
 }
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
-    location                     = data.azurerm_resource_group.main.location
-    resource_group_name          = data.azurerm_resource_group.main.name
+    location                     = azurerm_resource_group.main.location
+    resource_group_name          = azurerm_resource_group.main.name
     allocation_method            = "Dynamic"
 }
 
 resource "azurerm_network_interface" "main" {
   name                = "azure-nic"
-  resource_group_name = data.azurerm_resource_group.main.name
-  location            = data.azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 
   ip_configuration {
     name                          = "internal"
@@ -50,8 +50,8 @@ resource "azurerm_network_interface" "main" {
 
 resource "azurerm_linux_virtual_machine" "main" {
   name                            = "azure-vm"
-  resource_group_name             = data.azurerm_resource_group.main.name
-  location                        = data.azurerm_resource_group.main.location
+  resource_group_name             = azurerm_resource_group.main.name
+  location                        = azurerm_resource_group.main.location
   network_interface_ids           = [azurerm_network_interface.main.id]
   size                            = "Standard_D2s_v3"
   admin_username                  = "nodesample"
